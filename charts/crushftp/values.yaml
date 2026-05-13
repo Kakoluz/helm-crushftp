@@ -13,6 +13,7 @@ volumes: [] # Volumes to mount to the image of other sites, etc.
   #   claimName: another-volume-claim
   #   mountPath: /mnt/FTP/Shared/another-volume
 configVolume:
+  accessMode: ReadWriteOnce
   size: 8Gi
 loadBalancerIp: 127.0.0.1
 features:
@@ -34,7 +35,7 @@ shared:
 replicaCount: 1
 
 image:
-  repository: greggbjensen/crushftp
+  repository: ghcr.io/kakoluz/crushftp
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""

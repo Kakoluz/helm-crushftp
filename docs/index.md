@@ -7,7 +7,7 @@ Share your files securely with FTP, Implicit FTPS, SFTP, HTTP, or HTTPS using Cr
 Add the helm repository and install the chart.
 
 ```
-helm repo add crushftp https://greggbjensen.github.io/helm-crushftp
+helm repo add crushftp https://kakoluz.github.io/helm-crushftp
 helm repo update
 
 helm install crushftp crushftp/crushftp
@@ -32,6 +32,8 @@ Override helm chart values with the settings you want.
 | shared.hosts.crushFtp.prefix | Prefix or sub-domain of the sftp site.                                                                     | ftp          |
 | shared.ingress.clusterIssuer | Used to enable a cluster certificate issuer such as cert-manager and lets-encrypt.                         | ''           |
 | shared.storageClassName      | Sets the storage class to use for the config volume.                                                       | default      |
+| image.repository             | Container image repository used by the chart.                                                              | ghcr.io/kakoluz/crushftp |
+| image.tag                    | Container image tag. Defaults to chart appVersion.                                                         | "11"        |
 
 # Docker Image
 
@@ -41,7 +43,7 @@ Docker image instructions if used separately from helm chart.
 
 | Volume                | Required | Function                                       | Example                                  |
 | --------------------- | -------- | ---------------------------------------------- | ---------------------------------------- |
-| `/var/opt/CrushFTP10` | Yes      | Persistent storage for CrushFTP config         | `/your/config/path/:/var/opt/CrushFTP10` |
+| `/var/opt/CrushFTP11` | Yes      | Persistent storage for CrushFTP config         | `/your/config/path/:/var/opt/CrushFTP11` |
 | `/mnt/FTP/Shared`     | No       | Shared host folder for file sharing with users | `/your/host/path/:/mnt/FTP/Shared`       |
 
 * You can add as many volumes as you want between host and the container and change their mount location within the container. You will configure individual folder access and permissions for each user in CrushFTPs User Manager. The "/mnt/FTP/Shared" in the table above is just one such example.
@@ -70,14 +72,14 @@ Docker image instructions if used separately from helm chart.
 
 ## Installation
 
-Run this container and mount the containers `/var/opt/CrushFTP10` volume to the host to keep CrushFTP's configuration persistent. Open a browser and go to `http://<IP>:8080`. Note that the default username and password are both `crushadmin` unless the default environment variables are changed.
+Run this container and mount the containers `/var/opt/CrushFTP11` volume to the host to keep CrushFTP's configuration persistent. Open a browser and go to `http://<IP>:8080`. Note that the default username and password are both `crushadmin` unless the default environment variables are changed.
 
 This command will create a new container and expose all ports. Remember to change the `<volume>` to a location on your host machine.
 
 ```
-docker run -p 21:21 -p 443:443 -p 2000-2100:2000-2100 -p 2222:2222 -p 8080:8080 -p 9090:9090 -v <volume>:/var/opt/CrushFTP10 greggbjensen/crushftp:latest
+docker run -p 21:21 -p 443:443 -p 2000-2100:2000-2100 -p 2222:2222 -p 8080:8080 -p 9090:9090 -v <volume>:/var/opt/CrushFTP11 ghcr.io/kakoluz/crushftp:11
 ```
 
 # CrushFTP Configuration
 
-Visit the [CrushFTP 10 Wiki](https://www.crushftp.com/crush10wiki/)
+Visit the [CrushFTP 11 Wiki](https://www.crushftp.com/crush11wiki/)

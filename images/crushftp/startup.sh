@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-CRUSH_FTP_BASE_DIR="/var/opt/CrushFTP10"
+CRUSH_FTP_BASE_DIR="/var/opt/CrushFTP11"
 FTP_CONFIG_BASE_DIR="/mnt/config"
 
 # Create persisted volume directories and symbolically link to correct CrushFTP path.
@@ -60,4 +60,18 @@ echo "# User:		${CRUSH_ADMIN_USER}"
 echo "# Password:	${CRUSH_ADMIN_PASSWORD}"
 echo "########################################"
 
-while true; do sleep 86400; done
+LOG_DIR="${CRUSH_FTP_BASE_DIR}/logs"
+echo "Streaming CrushFTP logs from ${LOG_DIR}..."
+
+while true; do
+    shopt -s nullglob
+    log_files=("${LOG_DIR}"/*.log "${LOG_DIR}"/*.txt)
+    shopt -u nullglob
+
+    if (( ${#log_files[@]} > 0 )); then
+        # Replace the shell with tail so container logs mirror CrushFTP logs.
+        exec tail -n 0 -F "${log_files[@]}"
+    fi
+
+    sleep 2
+done

@@ -3,5 +3,5 @@ name: crushftp
 description: Share your files securely with FTP, Implicit FTPS, SFTP, HTTP, or HTTPS using CrushFTP
 type: application
 icon: https://www.crushftp.com/assets/img/favicon/apple-touch-icon.png
-version: 1.1.0
+version: 1.1.1
 appVersion: 11.4.5

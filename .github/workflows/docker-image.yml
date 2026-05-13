@@ -17,7 +17,7 @@ permissions:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository_owner }}/crushftp
+  IMAGE_NAME: crushftp
 
 jobs:
   docker:
@@ -43,19 +43,21 @@ jobs:
       - name: Read chart appVersion
         id: chart
         run: |
+          owner="$(printf '%s' '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')"
           app_version="$(awk -F': ' '/^appVersion:/ {gsub(/"/, "", $2); print $2; exit}' charts/crushftp/Chart.yaml)"
           major="$(echo "$app_version" | cut -d. -f1)"
           major_minor="$(echo "$app_version" | cut -d. -f1-2)"
 
           {
+            echo "owner=$owner"
             echo "app_version=$app_version"
             echo "major=$major"
             echo "major_minor=$major_minor"
             printf 'tags<<EOF\n'
-            printf '%s/%s:latest\n' "${{ env.REGISTRY }}" "${{ env.IMAGE_NAME }}"
-            printf '%s/%s:%s\n' "${{ env.REGISTRY }}" "${{ env.IMAGE_NAME }}" "$major"
-            printf '%s/%s:%s\n' "${{ env.REGISTRY }}" "${{ env.IMAGE_NAME }}" "$major_minor"
-            printf '%s/%s:%s\n' "${{ env.REGISTRY }}" "${{ env.IMAGE_NAME }}" "$app_version"
+            printf '%s/%s/%s:latest\n' "${{ env.REGISTRY }}" "$owner" "${{ env.IMAGE_NAME }}"
+            printf '%s/%s/%s:%s\n' "${{ env.REGISTRY }}" "$owner" "${{ env.IMAGE_NAME }}" "$major"
+            printf '%s/%s/%s:%s\n' "${{ env.REGISTRY }}" "$owner" "${{ env.IMAGE_NAME }}" "$major_minor"
+            printf '%s/%s/%s:%s\n' "${{ env.REGISTRY }}" "$owner" "${{ env.IMAGE_NAME }}" "$app_version"
             printf 'EOF\n'
           } >> "$GITHUB_OUTPUT"
 

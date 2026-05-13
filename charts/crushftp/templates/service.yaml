@@ -5,7 +5,7 @@ metadata:
   labels:
     {{- include "crushftp.labels" . | nindent 4 }}
 spec:
-  type: LoadBalancer
+  type: {{ .Values.service.type }}
   ports:
     - name: http
       port: 8080
@@ -33,5 +33,10 @@ spec:
     {{- end }}
   selector:
     {{- include "crushftp.selectorLabels" . | nindent 4 }}
-  externalTrafficPolicy: Local
-  loadBalancerIP: {{ .Values.loadBalancerIp }}
+  {{- if eq .Values.service.type "LoadBalancer" }}
+  externalTrafficPolicy: {{ .Values.service.externalTrafficPolicy | default "Cluster" }}
+  {{- $lbIp := .Values.service.loadBalancerIP | default .Values.loadBalancerIp }}
+  {{- if $lbIp }}
+  loadBalancerIP: {{ $lbIp }}
+  {{- end }}
+  {{- end }}

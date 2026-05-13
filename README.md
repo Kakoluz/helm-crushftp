@@ -29,7 +29,10 @@ Override helm chart values with the settings you want.
 | tls.secretName               | Name of the secret to use for the TLS certificate.                                                         | crushftp-tls |
 | volumes                      | Set of volumes from other sites or containers to mount.<br> Requires `name`, `claimName`, and `mountPath`. | [ ]          |
 | configVolume.size            | Size of the CrushFTP configuration volume.                                                                 | 8Gi          |
-| loadBalancerIp               | IP address of the ingress to use.                                                                          | 127.0.0.1    |
+| loadBalancerIp               | Deprecated. Use `service.loadBalancerIP` instead.                                                          | ""          |
+| service.type                | Kubernetes Service type for external access.                                                               | LoadBalancer |
+| service.loadBalancerIP      | Optional static IP for Service type `LoadBalancer`.                                                        | ""          |
+| service.externalTrafficPolicy | External traffic policy for `LoadBalancer` service.                                                      | Cluster      |
 | shared.hosts.crushFtp.root   | Root domain of the sftp site.                                                                              | .local.com   |
 | shared.hosts.crushFtp.prefix | Prefix or sub-domain of the sftp site.                                                                     | ftp          |
 | shared.ingress.clusterIssuer | Used to enable a cluster certificate issuer such as cert-manager and lets-encrypt.                         | ''           |

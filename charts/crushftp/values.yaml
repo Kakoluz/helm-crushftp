@@ -15,7 +15,8 @@ volumes: [] # Volumes to mount to the image of other sites, etc.
 configVolume:
   accessMode: ReadWriteOnce
   size: 8Gi
-loadBalancerIp: 127.0.0.1
+# Deprecated: use service.loadBalancerIP instead.
+loadBalancerIp: ""
 features:
   enableFtp: false
 
@@ -67,8 +68,11 @@ securityContext: {}
   # runAsUser: 1000
 
 service:
-  type: ClusterIP
+  type: LoadBalancer
   port: 80
+  # Set only if your cloud/K8s provider supports static LB assignment.
+  loadBalancerIP: ""
+  externalTrafficPolicy: Cluster
 
 ingress:
   enabled: false

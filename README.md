@@ -33,7 +33,7 @@ Override helm chart values with the settings you want.
 | shared.hosts.crushFtp.root   | Root domain of the sftp site.                                                                              | .local.com   |
 | shared.hosts.crushFtp.prefix | Prefix or sub-domain of the sftp site.                                                                     | ftp          |
 | shared.ingress.clusterIssuer | Used to enable a cluster certificate issuer such as cert-manager and lets-encrypt.                         | ''           |
-| shared.storageClassName      | Sets the storage class to use for the config volume.                                                       | default      |
+| shared.storageClassName      | Optional storage class for the config volume. Leave empty to use cluster default.                          | ""         |
 | image.repository             | Container image repository used by the chart.                                                              | ghcr.io/kakoluz/crushftp |
 | image.tag                    | Container image tag. Defaults to chart appVersion.                                                         | "11"        |
 

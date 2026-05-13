@@ -7,7 +7,9 @@ metadata:
 spec:
   accessModes:
     - {{ .Values.configVolume.accessMode }}
+  {{- if .Values.shared.storageClassName }}
   storageClassName: {{ .Values.shared.storageClassName }}
+  {{- end }}
   resources:
     requests:
       storage: {{ .Values.configVolume.size }}

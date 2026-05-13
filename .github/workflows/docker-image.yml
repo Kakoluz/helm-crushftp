@@ -40,24 +40,32 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract metadata (tags, labels)
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: |
-            type=raw,value=11
-            type=raw,value=latest,enable={{is_default_branch}}
-            type=sha,format=short
-            type=ref,event=tag
+      - name: Read chart appVersion
+        id: chart
+        run: |
+          app_version="$(awk -F': ' '/^appVersion:/ {gsub(/"/, "", $2); print $2; exit}' charts/crushftp/Chart.yaml)"
+          major="$(echo "$app_version" | cut -d. -f1)"
+          major_minor="$(echo "$app_version" | cut -d. -f1-2)"
+
+          {
+            echo "app_version=$app_version"
+            echo "major=$major"
+            echo "major_minor=$major_minor"
+            printf 'tags<<EOF\n'
+            printf '%s/%s:latest\n' "${{ env.REGISTRY }}" "${{ env.IMAGE_NAME }}"
+            printf '%s/%s:%s\n' "${{ env.REGISTRY }}" "${{ env.IMAGE_NAME }}" "$major"
+            printf '%s/%s:%s\n' "${{ env.REGISTRY }}" "${{ env.IMAGE_NAME }}" "$major_minor"
+            printf '%s/%s:%s\n' "${{ env.REGISTRY }}" "${{ env.IMAGE_NAME }}" "$app_version"
+            printf 'EOF\n'
+          } >> "$GITHUB_OUTPUT"
 
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
           context: ./images/crushftp
           file: ./images/crushftp/Dockerfile
+          platforms: linux/amd64,linux/arm64
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ steps.chart.outputs.tags }}
           cache-from: type=gha
           cache-to: type=gha,mode=max

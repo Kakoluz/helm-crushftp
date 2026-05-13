@@ -74,23 +74,24 @@ jobs:
 
       - name: Update Helm repository index
         run: |
-          cp "${{ steps.package.outputs.path }}" "docs/crushftp-${{ steps.package.outputs.version }}.tgz"
+          temp_chart="docs/crushftp-${{ steps.package.outputs.version }}.tgz"
+          cp "${{ steps.package.outputs.path }}" "$temp_chart"
 
           helm repo index docs \
             --url "https://github.com/${{ github.repository }}/releases/download/${{ steps.release_tag.outputs.value }}" \
             --merge docs/index.yaml
 
+          rm -f "$temp_chart"
+
       - name: Commit and push index changes
         run: |
-          chart_package="docs/crushftp-${{ steps.package.outputs.version }}.tgz"
-
-          if git diff --quiet -- docs/index.yaml "$chart_package"; then
+          if git diff --quiet -- docs/index.yaml; then
             echo "No index changes to commit."
             exit 0
           fi
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/index.yaml "$chart_package"
+          git add docs/index.yaml
           git commit -m "chore(charts): release crushftp-${{ steps.package.outputs.version }}"
           git push origin HEAD:main
